@@ -1,6 +1,6 @@
 [submodule "client"]
-	path = client
+	path = Client
 	url = https://github.com/Luthfii1/Lost-And-Found-FE.git
 [submodule "server"]
-	path = server
+	path = Server
 	url = https://github.com/Luthfii1/Lost-And-Found-BE.git
