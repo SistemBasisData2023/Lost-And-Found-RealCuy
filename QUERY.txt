@@ -1,0 +1,99 @@
+SET TIMEZONE = 'Asia/Jakarta';
+
+----------------------------------
+CREATE TYPE jurusan AS ENUM(
+'ARSITEKTUR',
+'ARSI. INTERIOR',
+'TEKNIK BIOMEDIS',
+'TEKNIK BIOPROSES',
+'TEKNIK ELEKTRO',
+'TEKNIK INDUSTRI',
+'TEKNIK KIMIA',
+'TEKNIK KOMPUTER',
+'TEKNIK LINGKUNGAN',
+'TEKNIK MESIN',
+'TEKNIK METALURGI DAN MATERIAL',
+'TEKNIK PERKAPALAN',
+'TEKNIK SIPIL'
+);
+
+------------------------------------
+CREATE TABLE user_data(
+user_id BIGSERIAL,
+email VARCHAR(40) UNIQUE NOT NULL,
+password TEXT NOT NULL,
+username VARCHAR(40) UNIQUE NOT NULL,
+name VARCHAR(50) NOT NULL,
+bio VARCHAR(255),
+birth_date DATE NOT NULL,
+jurusan_kuliah jurusan NOT NULL,
+PRIMARY KEY(user_id)
+);
+
+----------------------------------
+CREATE TYPE statustype AS ENUM(
+'Lost',
+'Found',
+'Gotcha!',
+'Share'
+);
+
+---------------------------------------
+CREATE TABLE post(
+post_id BIGSERIAL,
+user_id INT,
+post_txt TEXT NOT NULL,
+rise_vote INT DEFAULT 0,
+post_date TIMESTAMPTZ DEFAULT NOW(),
+status statustype NOT NULL,
+PRIMARY KEY(post_id),
+CONSTRAINT fk_user_data
+FOREIGN KEY(user_id)
+REFERENCES user_data(user_id)
+ON DELETE CASCADE
+);
+
+---------------------------------------
+CREATE type seencheck AS ENUM(
+'SENT',
+'SEEN'
+);
+
+-----------------------------------------
+CREATE TABLE room_chat(
+CREATE TABLE room_chat (
+  id_room SERIAL PRIMARY KEY,
+  person_1 INTEGER NOT NULL REFERENCES user_data(user_id),
+  person_2 INTEGER NOT NULL REFERENCES user_data(user_id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+);
+
+-----------------------------------------
+CREATE TABLE chat(
+chat_id BIGSERIAL,
+sent_time TIMESTAMPTZ DEFAULT NOW(),
+message TEXT NOT NULL,
+msg_status seencheck DEFAULT 'SENT',
+sender_id INT,
+receiver_id INT,
+PRIMARY KEY(chat_id),
+CONSTRAINT fk_user_data_sender
+FOREIGN KEY(sender_id)
+REFERENCES user_data(user_id)
+ON DELETE CASCADE,
+CONSTRAINT fk_user_data_receiver
+FOREIGN KEY(receiver_id)
+REFERENCES user_data(user_id)
+ON DELETE CASCADE
+);
+
+-----------------------------------------
+CREATE TABLE detail_chat(
+  id_chat BIGINT PRIMARY KEY,
+  id_room INTEGER NOT NULL REFERENCES room_chat(id_room),
+  sender INTEGER NOT NULL REFERENCES user_data(user_id),
+  receiver INTEGER NOT NULL REFERENCES user_data(user_id),
+  time TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  message TEXT NOT NULL
+);
